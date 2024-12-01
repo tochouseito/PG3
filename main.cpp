@@ -1,17 +1,27 @@
 #include <iostream>
 #include <thread>
+#include <mutex>
 #include <stdio.h>
 
-void task() {
-    printf("Hello!Thread");
+std::mutex mtx;
+int counter = 0;
+
+void incrementCounter(int iterations) {
+    for (int i = 0; i < iterations; ++i) {
+        std::lock_guard<std::mutex> lock(mtx); // ロック
+        ++counter;
+    }
 }
 
 int main() {
-    // スレッドを作成
-    std::thread t(task);
+    const int iterations = 1000;
+    std::thread t1(incrementCounter, iterations);
+    std::thread t2(incrementCounter, iterations);
 
-    // スレッドの終了を待機
-    t.join(); // join()でスレッドの終了を待つ
+    t1.join();
+    t2.join();
+
+    printf("counter:%d", counter);
 
     return 0;
 }
