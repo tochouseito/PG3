@@ -1,38 +1,24 @@
 #include <iostream>
 #include <thread>
-#include <mutex>
-#include <condition_variable>
-#include <stdio.h>
+
+// スレッドで実行する関数
+void printMessage(const std::string& message) {
+    for (int i = 0; i < 5; ++i) {
+        std::cout << message << " " << i << std::endl;
+    }
+}
 
 int main() {
-    std::mutex mtx;
-    std::condition_variable cv;
-    int currentThread = 1; // 実行中のスレッドを示す番号
+    // 新しいスレッドを作成して、printMessageを実行
+    std::thread t(printMessage, "Hello from thread");
 
-    // スレッドで実行するラムダ関数
-    auto printThread = [&mtx, &cv, &currentThread](int id) {
-        std::unique_lock<std::mutex> lock(mtx);
-
-        // 自分の順番になるまで待機
-        cv.wait(lock, [&] { return currentThread == id; });
-
-        // 順番が来たらメッセージを表示
-        printf("thread%d\n", id);
-
-        // 次のスレッドに進む
-        currentThread++;
-        cv.notify_all(); // 他のスレッドに通知
-        };
-
-    // スレッドを作成
-    std::thread t1(printThread, 1);
-    std::thread t2(printThread, 2);
-    std::thread t3(printThread, 3);
+    // メインスレッドで別の処理
+    for (int i = 0; i < 5; ++i) {
+        std::cout << "Hello from main " << i << std::endl;
+    }
 
     // スレッドの終了を待機
-    t1.join();
-    t2.join();
-    t3.join();
+    t.join();
 
     return 0;
 }
