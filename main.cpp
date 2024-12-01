@@ -4,6 +4,18 @@
 #include <condition_variable>
 #include <stdio.h>
 
+class MyClass {
+public:
+    // constメンバ関数
+    int GetValue()const {
+        std::unique_lock<std::mutex> lock(vmtx);// mutexの切り替え
+        if (!value) { return 1; }
+        return value;
+    }
+    mutable std::mutex vmtx;
+    int value = 0;
+};
+
 int main() {
     std::mutex mtx;
     std::condition_variable cv;
