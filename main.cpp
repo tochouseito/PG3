@@ -1,19 +1,32 @@
 #include <iostream>
 #include <thread>
 #include <mutex>
+#include <condition_variable>
 #include <stdio.h>
 
-std::mutex mtx;
+std::mutex mtx;                     // ミューテックス
+std::condition_variable cv;         // 条件変数
+bool ready = false;                 // 条件を示すフラグ
 
-void task(const std::string& message) {
-    std::lock_guard<std::mutex> lock(mtx); // ロックを自動管理
-    std::cout << message << std::endl;
-    // スコープを抜けると自動的にアンロックされる
+void worker() {
+    std::unique_lock<std::mutex> lock(mtx);
+    printf("Worker: Waiting for the signal...");
+
+    cv.wait(lock, [] { return ready; }); // 条件が満たされるまで待機
+    printf("Worker: Signal received! Proceeding...");
+}
+
+void signaler() {
+    std::this_thread::sleep_for(std::chrono::seconds(1)); // シミュレーションのための遅延
+    std::unique_lock<std::mutex> lock(mtx);
+    ready = true;
+    printf("Signaler: Sending signal...");
+    cv.notify_one(); // 待機中のスレッドを1つ再開
 }
 
 int main() {
-    std::thread t1(task, "Hello from thread 1");
-    std::thread t2(task, "Hello from thread 2");
+    std::thread t1(worker);
+    std::thread t2(signaler);
 
     t1.join();
     t2.join();
