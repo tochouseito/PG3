@@ -4,24 +4,19 @@
 #include <stdio.h>
 
 std::mutex mtx;
-int counter = 0;
 
-void incrementCounter(int iterations) {
-    for (int i = 0; i < iterations; ++i) {
-        std::lock_guard<std::mutex> lock(mtx); // ロック
-        ++counter;
-    }
+void task(const std::string& message) {
+    std::lock_guard<std::mutex> lock(mtx); // ロックを自動管理
+    std::cout << message << std::endl;
+    // スコープを抜けると自動的にアンロックされる
 }
 
 int main() {
-    const int iterations = 1000;
-    std::thread t1(incrementCounter, iterations);
-    std::thread t2(incrementCounter, iterations);
+    std::thread t1(task, "Hello from thread 1");
+    std::thread t2(task, "Hello from thread 2");
 
     t1.join();
     t2.join();
-
-    printf("counter:%d", counter);
 
     return 0;
 }
