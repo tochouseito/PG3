@@ -10,17 +10,17 @@ bool ready = false;                 // 条件を示すフラグ
 
 void worker() {
     std::unique_lock<std::mutex> lock(mtx);
-    printf("Worker: Waiting for the signal...");
+    printf("シグナルを待機");
 
     cv.wait(lock, [] { return ready; }); // 条件が満たされるまで待機
-    printf("Worker: Signal received! Proceeding...");
+    printf("完了");
 }
 
 void signaler() {
     std::this_thread::sleep_for(std::chrono::seconds(1)); // シミュレーションのための遅延
     std::unique_lock<std::mutex> lock(mtx);
     ready = true;
-    printf("Signaler: Sending signal...");
+    printf("シグナル送信");
     cv.notify_one(); // 待機中のスレッドを1つ再開
 }
 
