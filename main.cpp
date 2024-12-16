@@ -23,4 +23,19 @@ int main() {
     // ラムダ式でサイコロの偶奇を判定し、入力値をキャプチャして結果を判断する
     auto checkResult = [=]() {
         bool isEven = (diceResult % 2 == 0);
-        bool userCorrect = ((userGuess == 0 && isEven) || (userGuess == 1
+        bool userCorrect = ((userGuess == 0 && isEven) || (userGuess == 1 && !isEven));
+
+        std::cout << "\n--- 結果発表 ---\n";
+        if (userCorrect) {
+            std::cout << "正解！サイコロの目は " << diceResult << " でした！" << std::endl;
+        } else {
+            std::cout << "不正解！サイコロの目は " << diceResult << " でした！" << std::endl;
+        }
+        };
+
+    // SetTimeoutを使用して3秒後に結果を表示
+    std::cout << "結果を確認中...\n";
+    SetTimeout(checkResult, 3000);
+
+    return 0;
+}
