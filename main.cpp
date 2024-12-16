@@ -1,32 +1,39 @@
-#include <cstdio>
+#include <iostream>
+#include <iomanip>
 
-// テンプレート関数：2つの引数の小さい値を返す
-template <typename T>
-T Min(T a, T b) {
-    return (a < b) ? a : b;
+double calculate_recursive_wage(int hours) {
+    double wage = 100.0; // 初回時給
+    double total = wage;
+
+    for (int i = 2; i <= hours; ++i) {
+        wage = (wage * 2) - 50; // 前時間の時給を元に計算
+        total += wage;          // 合計金額に加算
+    }
+
+    return total;
 }
 
-// オーバーロード関数: char型の場合にメッセージを出力する
-const char* Min(char a, char b) {
-    return "数値以外は代入できません";
+double calculate_general_wage(int hours, double hourly_rate = 1072.0) {
+    return hours * hourly_rate;
 }
 
 int main() {
-    // int型
-    int intA = 10, intB = 20;
-    printf("int型の小さい値: %d\n", Min(intA, intB));
+    int hours;
+    std::cout << "働く時間数を入力してください: ";
+    std::cin >> hours;
 
-    // float型
-    float floatA = 10.5f, floatB = 20.5f;
-    printf("float型の小さい値: %.2f\n", Min(floatA, floatB));
+    double general_wage = calculate_general_wage(hours);
+    double recursive_wage = calculate_recursive_wage(hours);
 
-    // double型
-    double doubleA = 10.123, doubleB = 5.456;
-    printf("double型の小さい値: %.3lf\n", Min(doubleA, doubleB));
+    std::cout << "\n--- 賃金比較結果 ---\n";
+    std::cout << "一般的な賃金体系: " << general_wage << " 円\n";
+    std::cout << "再帰的な賃金体系: " << recursive_wage << " 円\n";
 
-    // char型
-    char charA = 'a', charB = 'b';
-    printf("char型: %s\n", Min(charA, charB));
+    if (recursive_wage > general_wage) {
+        std::cout << "再帰的な賃金体系の方が有利です。\n";
+    } else {
+        std::cout << "一般的な賃金体系の方が有利です。\n";
+    }
 
     return 0;
 }
