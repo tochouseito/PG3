@@ -1,40 +1,56 @@
 #include <iostream>
-#include <cstdlib>
-#include <ctime>
-#include <thread>
-#include <chrono>
-#include <functional>
+#include <string>
 
-void SetTimeout(std::function<void()> func, int delayMilliseconds) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(delayMilliseconds));
-    func();
-}
+class Enemy {
+public:
+    Enemy() {
+        // 初期状態を接近に設定
+        currentState = &Enemy::approach;
+    }
+
+    void update() {
+        // 現在の状態を実行
+        if (currentState) {
+            (this->*currentState)(); // メンバ関数ポインタを実行
+        }
+    }
+
+private:
+    // 状態関数のポインタ型定義
+    using StateFunction = void (Enemy::*)();
+
+    // 現在の状態を保持する変数
+    StateFunction currentState;
+
+    // 状態: 接近
+    void approach() {
+        std::cout << "敵は接近している" << std::endl;
+        // 状態を射撃に遷移
+        currentState = &Enemy::shoot;
+    }
+
+    // 状態: 射撃
+    void shoot() {
+        std::cout << "敵は射撃している" << std::endl;
+        // 状態を離脱に遷移
+        currentState = &Enemy::flee;
+    }
+
+    // 状態: 離脱
+    void flee() {
+        std::cout << "敵は離脱している" << std::endl;
+        // 状態遷移を終了
+        currentState = nullptr;
+    }
+};
 
 int main() {
-    srand(static_cast<unsigned int>(time(0))); // 乱数のシードを設定
+    Enemy enemy;
 
-    int diceResult = rand() % 6 + 1; // サイコロの目を1から6までランダムに決定
-    int userGuess;
-
-    std::cout << "サイコロの目が奇数か偶数かを当ててください (奇数=1, 偶数=0): ";
-    std::cin >> userGuess;
-
-    // ラムダ式でサイコロの偶奇を判定
-    auto checkResult = [=]() {
-        bool isEven = (diceResult % 2 == 0);
-        bool userCorrect = ((userGuess == 0 && isEven) || (userGuess == 1 && !isEven));
-
-        std::cout << "\n--- 結果発表 ---\n";
-        if (userCorrect) {
-            std::cout << "正解！サイコロの目は " << diceResult << " でした！" << std::endl;
-        } else {
-            std::cout << "不正解！サイコロの目は " << diceResult << " でした！" << std::endl;
-        }
-        };
-
-    // 3秒後に結果を表示
-    std::cout << "結果を確認中...\n";
-    SetTimeout(checkResult, 3000);
+    while (true) {
+        enemy.update();
+        if (std::cin.get() == 'q') break; // 'q' を押すと終了
+    }
 
     return 0;
 }
