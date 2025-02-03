@@ -7,8 +7,8 @@
 // 関数ポインタ用の型定義
 using Callback = void (*)(bool);
 
-// 判定結果を表示するコールバック関数
-void showResult(bool isCorrect) {
+// 判定結果を表示する
+void ShowResult(bool isCorrect) {
     if (isCorrect) {
         std::cout << "正解！おめでとうございます！" << std::endl;
     } else {
@@ -16,15 +16,15 @@ void showResult(bool isCorrect) {
     }
 }
 
-// サイコロを振る関数
-int rollDice() {
-    return rand() % 6 + 1; // 1から6までのランダムな数
+// サイコロを振る
+int RollDice() {
+    return rand() % 6 + 1;
 }
 
 // ユーザー入力を処理し、結果を判定する関数
-void judgeGame(Callback callback) {
-    int diceResult = rollDice();
-    std::cout << "サイコロの目が奇数か偶数かを当ててください！ (奇数=1, 偶数=0): ";
+void JudgeGame(Callback callback) {
+    int diceResult = RollDice();
+    std::cout << "サイコロの目が奇数か偶数かを当ててください (奇数=1, 偶数=0): ";
 
     int userGuess;
     std::cin >> userGuess;
@@ -32,11 +32,11 @@ void judgeGame(Callback callback) {
     bool isEven = (diceResult % 2 == 0);
     bool userCorrect = ((userGuess == 0 && isEven) || (userGuess == 1 && !isEven));
 
-    // 答えをすぐに出さず、3秒間待機
+    // 3秒間待機
     std::cout << "結果を確認中...\n";
     std::this_thread::sleep_for(std::chrono::seconds(3));
 
-    // コールバック関数で結果を通知
+    // 結果を通知
     callback(userCorrect);
     std::cout << "実際のサイコロの目: " << diceResult << std::endl;
 }
@@ -44,10 +44,10 @@ void judgeGame(Callback callback) {
 int main() {
     srand(static_cast<unsigned int>(time(0))); // 乱数のシードを設定
 
-    std::cout << "サイコロの目が奇数か偶数かを当てるゲームを始めます！" << std::endl;
+    std::cout << "サイコロの目が奇数か偶数かを当てるゲームを始めます" << std::endl;
 
     // ゲームの開始
-    judgeGame(showResult);
+    JudgeGame(ShowResult);
 
     return 0;
 }
