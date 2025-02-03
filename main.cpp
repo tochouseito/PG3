@@ -5,7 +5,6 @@
 #include <chrono>
 #include <functional>
 
-// SetTimeout関数を作成する
 void SetTimeout(std::function<void()> func, int delayMilliseconds) {
     std::this_thread::sleep_for(std::chrono::milliseconds(delayMilliseconds));
     func();
@@ -17,10 +16,10 @@ int main() {
     int diceResult = rand() % 6 + 1; // サイコロの目を1から6までランダムに決定
     int userGuess;
 
-    std::cout << "サイコロの目が奇数か偶数かを当ててください！ (奇数=1, 偶数=0): ";
+    std::cout << "サイコロの目が奇数か偶数かを当ててください (奇数=1, 偶数=0): ";
     std::cin >> userGuess;
 
-    // ラムダ式でサイコロの偶奇を判定し、入力値をキャプチャして結果を判断する
+    // ラムダ式でサイコロの偶奇を判定
     auto checkResult = [=]() {
         bool isEven = (diceResult % 2 == 0);
         bool userCorrect = ((userGuess == 0 && isEven) || (userGuess == 1 && !isEven));
@@ -33,7 +32,7 @@ int main() {
         }
         };
 
-    // SetTimeoutを使用して3秒後に結果を表示
+    // 3秒後に結果を表示
     std::cout << "結果を確認中...\n";
     SetTimeout(checkResult, 3000);
 
