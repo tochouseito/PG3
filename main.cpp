@@ -1,9 +1,10 @@
 #include <iostream>
 #include <iomanip>
 
-double calculate_recursive_wage(int hours) {
-    double wage = 100.0; // 初回時給
-    double total = wage;
+// 再帰的な賃金体系
+float CalculateRecursiveWage(int hours) {
+    float wage = 100.0; // 初回時給
+    float total = wage;
 
     for (int i = 2; i <= hours; ++i) {
         wage = (wage * 2) - 50; // 前時間の時給を元に計算
@@ -13,7 +14,8 @@ double calculate_recursive_wage(int hours) {
     return total;
 }
 
-double calculate_general_wage(int hours, double hourly_rate = 1072.0) {
+// 一般的な賃金体系
+float CalculateWage(int hours, float hourly_rate = 1072.0) {
     return hours * hourly_rate;
 }
 
@@ -22,10 +24,10 @@ int main() {
     std::cout << "働く時間数を入力してください: ";
     std::cin >> hours;
 
-    double general_wage = calculate_general_wage(hours);
-    double recursive_wage = calculate_recursive_wage(hours);
+    float general_wage = CalculateWage(hours);
+    float recursive_wage = CalculateRecursiveWage(hours);
 
-    std::cout << "\n--- 賃金比較結果 ---\n";
+    std::cout << "\n賃金比較結果\n";
     std::cout << "一般的な賃金体系: " << general_wage << " 円\n";
     std::cout << "再帰的な賃金体系: " << recursive_wage << " 円\n";
 
