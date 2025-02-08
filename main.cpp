@@ -1,49 +1,36 @@
 #include "Utility.h"
 
 // 基底クラス
-class IShape {
+class Animal {
 public:
-	virtual ~IShape() = default;
-	virtual void Draw() const = 0;
-	virtual float Size() const = 0;
-protected:
-	float size_ = 0.0f;
+	~Animal() = default;
+    virtual void Speak() const = 0;
 };
 
-// 派生クラス
-class Circle : public IShape {
+// 犬派生クラス
+class Dog : public Animal {
 public:
-	void Draw() const override {
-		CharOut("Circle Draw",Size());
+	void Speak() const override {
+		CharOut("Dog: Woof!");
 	}
-	float Size() const override {
-		return PI * radius_ * radius_;
-	}
-private:
-	float radius_ = 3.0f;
 };
 
-// 派生クラス
-class Rectangle : public IShape {
+// 猫派生クラス
+class Cat : public Animal {
 public:
-	void Draw() const override {
-		CharOut("Rectangle Draw",Size());
+	void Speak() const override {
+		CharOut("Cat: Meow!");
 	}
-	float Size() const override {
-		return width_ * height_;
-	}
-private:
-	float width_ = 5.0f;
-	float height_ = 3.0f;
 };
 
 int main() {
+	// 生成
+    std::unique_ptr<Animal> dog = std::make_unique<Dog>();
+	std::unique_ptr<Animal> cat = std::make_unique<Cat>();
 
-	std::unique_ptr<IShape> circle = std::make_unique<Circle>();
-	std::unique_ptr<IShape> rectangle = std::make_unique<Rectangle>();
+	// 鳴く
+	dog->Speak();
+	cat->Speak();
 
-	circle->Draw();
-	rectangle->Draw();
-
-	return 0;
+    return 0;
 }
