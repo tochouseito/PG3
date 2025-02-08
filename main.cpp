@@ -1,40 +1,36 @@
-#include <iostream>
+#include "Utility.h"
 
-// 比較クラス
-template <typename T1, typename T2>
-class Compare {
+// 基底クラス
+class Animal {
 public:
-	T1 a;
-	T2 b;
-	Compare(T1 a, T2 b) : a(a), b(b) {};
-	inline T1 Min() {
-		return static_cast<T1>(a < b ? a : b);
+	~Animal() = default;
+    virtual void Speak() const = 0;
+};
+
+// 犬派生クラス
+class Dog : public Animal {
+public:
+	void Speak() const override {
+		CharOut("Dog: Woof!");
 	}
 };
 
-// 出力関数
-template <typename T>
-void CharOut(const std::string& text,const T& instance) {
-	std::cout << text << instance << "\n";
-}
+// 猫派生クラス
+class Cat : public Animal {
+public:
+	void Speak() const override {
+		CharOut("Cat: Meow!");
+	}
+};
 
-// メイン関数
 int main() {
-    // int, float, double型の組み合わせ
-	Compare<int, int> compare(76, 0);
-	Compare<float, float> compare2(6.0f, 7.0f);
-	Compare<double, double> compare3(6.0, 89.0);
-	Compare<int, float> compare4(4, 7.0f);
-	Compare<int, double> compare5(6, 1.0);
-	Compare<float, double> compare6(-10.0f, 0.0);
+	// 生成
+    std::unique_ptr<Animal> dog = std::make_unique<Dog>();
+	std::unique_ptr<Animal> cat = std::make_unique<Cat>();
 
-	// 出力
-	CharOut("compare.IsEqual() : ", compare.Min());
-	CharOut("compare2.IsEqual() : ", compare2.Min());
-	CharOut("compare3.IsEqual() : ", compare3.Min());
-	CharOut("compare4.IsEqual() : ", compare4.Min());
-	CharOut("compare5.IsEqual() : ", compare5.Min());
-	CharOut("compare6.IsEqual() : ", compare6.Min());
+	// 鳴く
+	dog->Speak();
+	cat->Speak();
 
     return 0;
 }
