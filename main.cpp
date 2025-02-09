@@ -1,49 +1,57 @@
 #include "Utility.h"
 
-// 基底クラス
-class IShape {
-public:
-	virtual ~IShape() = default;
-	virtual void Draw() const = 0;
-	virtual float Size() const = 0;
-protected:
-	float size_ = 0.0f;
-};
-
-// 派生クラス
-class Circle : public IShape {
-public:
-	void Draw() const override {
-		CharOut("Circle Draw",Size());
-	}
-	float Size() const override {
-		return PI * radius_ * radius_;
-	}
-private:
-	float radius_ = 3.0f;
-};
-
-// 派生クラス
-class Rectangle : public IShape {
-public:
-	void Draw() const override {
-		CharOut("Rectangle Draw",Size());
-	}
-	float Size() const override {
-		return width_ * height_;
-	}
-private:
-	float width_ = 5.0f;
-	float height_ = 3.0f;
-};
+void OutStations(const std::list<const char*>& stations,const char* year) {
+    CharOut("--Stations in ", year);
+    for (const char* station : stations) {
+        CharOut("Station: ", station);
+    }
+}
 
 int main() {
 
-	std::unique_ptr<IShape> circle = std::make_unique<Circle>();
-	std::unique_ptr<IShape> rectangle = std::make_unique<Rectangle>();
+    // 初期の山手線
+    std::list<const char*> yamanoteLine = {
+        "Tokyo",
+        "Kanda",
+        "Akihabara",
+        "Ueno",
+        "Okachimachi",
+        "Yurakucho",
+        "Shinagawa",
+        "Shibuya",
+        "Shinjuku",
+        "Ikebukuro",
+        "Tabata"
+    };
 
-	circle->Draw();
-	rectangle->Draw();
+    // 駅一覧表示
+    OutStations(yamanoteLine, "1970--");
 
-	return 0;
+    // 西日暮里の追加
+	for (const char* station : yamanoteLine) {
+        if (station == "Tabata") {
+			// Tabataの次に追加
+			auto it = std::find(yamanoteLine.begin(), yamanoteLine.end(), station);
+			yamanoteLine.insert(std::next(it), "Nishi-Nippori");
+			break;
+        }
+	}
+
+    // 駅一覧表示
+    OutStations(yamanoteLine, "2019--");
+
+    // 高輪ゲートウェイの追加
+    for (const char* station : yamanoteLine) {
+        if (station == "Shinagawa") {
+            // Tabataの次に追加
+            auto it = std::find(yamanoteLine.begin(), yamanoteLine.end(), station);
+            yamanoteLine.insert(std::next(it), "Takanawa Gateway");
+            break;
+        }
+    }
+
+	// 駅一覧表示
+	OutStations(yamanoteLine, "2022--");
+
+    return 0;
 }

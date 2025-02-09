@@ -3,6 +3,9 @@
 #include <memory>
 #include <iostream>
 #include <numbers>
+#include <list>
+#include <vector>
+#include <array>
 
 const float PI = std::numbers::pi_v<float>;
 
