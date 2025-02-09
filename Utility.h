@@ -6,6 +6,9 @@
 #include <list>
 #include <vector>
 #include <array>
+#include <fstream>
+#include <algorithm>
+#include <regex>
 
 const float PI = std::numbers::pi_v<float>;
 
