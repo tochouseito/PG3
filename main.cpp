@@ -12,7 +12,8 @@ public:
     ThreadManager(size_t numThreads);
     ~ThreadManager();
 
-    void EnqueueTask(std::function<void()> task);
+    //template <typename T>
+    void EnqueueTask(std::function<void(int value)> task);
     void StopAllThreads();
 
 private:
@@ -24,6 +25,13 @@ private:
     std::condition_variable condition_;
     std::atomic<bool> stop_{ false };
 };
+
+void Task(int i) {
+    std::cout << "Task " << i << " executed on thread " << std::this_thread::get_id() << std::endl;
+    //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::cout << "End Task " << i << std::endl;
+}
 
 // コンストラクタ: 指定した数のスレッドを作成
 ThreadManager::ThreadManager(size_t numThreads) {
@@ -38,7 +46,8 @@ ThreadManager::~ThreadManager() {
 }
 
 // タスクをキューに追加
-void ThreadManager::EnqueueTask(std::function<void()> task) {
+//template <typename T>
+void ThreadManager::EnqueueTask(std::function<void(int value)> task) {
     {
         std::lock_guard<std::mutex> lock(queueMutex_);
         tasks_.push(std::move(task));
@@ -65,6 +74,7 @@ void ThreadManager::WorkerThread() {
 
 // 全スレッドの停止
 void ThreadManager::StopAllThreads() {
+	std::cout << "StopAllThreads" << std::endl;
     {
         std::lock_guard<std::mutex> lock(queueMutex_);
         stop_ = true;
@@ -78,17 +88,21 @@ void ThreadManager::StopAllThreads() {
     }
 }
 
-// 使用例
 int main() {
     ThreadManager threadManager(4); // 4スレッドを管理
 
     // タスクを追加
     for (int i = 0; i < 10; ++i) {
-        threadManager.EnqueueTask([i] {
-            std::cout << "Task " << i << " executed on thread " << std::this_thread::get_id() << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            });
+        threadManager.EnqueueTask(Task(i));
     }
+   // for (int i = 0; i < 10; ++i) {
+   //     threadManager.EnqueueTask([i] {
+   //         std::cout << "Task " << i << " executed on thread " << std::this_thread::get_id() << std::endl;
+   //         //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+   //         std::this_thread::sleep_for(std::chrono::seconds(1));
+			//std::cout << "End Task " << i << std::endl;
+   //         });
+   // }
 
     std::this_thread::sleep_for(std::chrono::seconds(2)); // 少し待つ
     threadManager.StopAllThreads(); // 終了処理
